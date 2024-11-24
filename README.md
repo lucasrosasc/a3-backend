@@ -19,3 +19,9 @@ $ pip install -r requirements.txt
 ```bash
 $ uvicorn main:app --reload
 ```
+
+### Documentation is only availible when the project is running 
+
+```bash
+$ http://localhost:8000/docs
+```
