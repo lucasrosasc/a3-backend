@@ -91,10 +91,7 @@ async def post_predict_betting_expenses(predict_betting_expenses_form: PredictBe
         expected_expense = predict_spend(
             age, social_class, gender, bets_frquency, mensal_rent
         )
-        print(
-            f"Seu gasto previsto com apostas online é de R$ {expected_expense:.2f} por mês."
-        )
-
+        
         return PredictBettingExpensesResponse(
             f"{name}, seu gasto previsto com apostas online é de R$ {expected_expense:.2f} por mês. O coeficiente R^2 do modelo é: {r2:.2f}",
             "success",
