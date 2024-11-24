@@ -7,10 +7,6 @@ This project is a Python-based API built with FastAPI for performing betting dat
 ### Dependencies
 
 - python = v3.11.0
-- fastapi
-- uvicorn
-- pydantic
-- pydantic-settings
 
 ### Install Project Dependencies
 
