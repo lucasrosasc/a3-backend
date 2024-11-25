@@ -1,20 +1,26 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException, Depends
 from fastapi import status
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import Ridge
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score
+from uuid import UUID
+from sqlalchemy.orm import Session
 
 from models.predict_betting_expenses_form import PredictBettingExpensesForm
+from models.prediction import Prediction
 from responses.predict_betting_expenses_response import PredictBettingExpensesResponse
+from core.database import get_db
 
 router = APIRouter()
 
-
 # POST Bets
 @router.post("", status_code=status.HTTP_200_OK, response_model=PredictBettingExpensesResponse)
-async def post_predict_betting_expenses(predict_betting_expenses_form: PredictBettingExpensesForm):
+async def post_predict_betting_expenses(
+    predict_betting_expenses_form: PredictBettingExpensesForm,
+    db: Session = Depends(get_db)
+):
     # Data simulation based on the information provided
     data = {
         "age": [18, 25, 30, 35, 40, 45, 50, 55, 60],
@@ -92,10 +98,60 @@ async def post_predict_betting_expenses(predict_betting_expenses_form: PredictBe
             age, social_class, gender, bets_frequency, mensal_rent
         )
         
+        # Convert numpy values to Python native types
+        expected_expense_float = float(expected_expense)
+        r2_float = float(r2)
+        
+        new_prediction = Prediction(
+            name=name,
+            age=age,
+            social_class=social_class,
+            gender=gender,
+            bets_frequency=bets_frequency,
+            mensal_rent=mensal_rent,
+            loss=expected_expense_float,
+            r2=r2_float
+        )
+        db.add(new_prediction)
+        db.commit()
+        db.refresh(new_prediction)
+        
         return PredictBettingExpensesResponse(
-            f"{name}, seu gasto previsto com apostas online é de R$ {expected_expense:.2f} por mês. O coeficiente R^2 do modelo é: {r2:.2f}",
-            "success",
+            id=new_prediction.id,
+            name=new_prediction.name,
+            age=new_prediction.age,
+            social_class=new_prediction.social_class,
+            gender=new_prediction.gender,
+            bets_frequency=new_prediction.bets_frequency,
+            mensal_rent=new_prediction.mensal_rent,
+            loss=new_prediction.loss,
+            r2=new_prediction.r2
         )
 
     except ValueError as e:
-        return PredictBettingExpensesResponse(f"Erro de entrada: {e}", "error")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+
+@router.get("/{prediction_id}", response_model=PredictBettingExpensesResponse)
+async def get_prediction(prediction_id: UUID, db: Session = Depends(get_db)):
+    prediction = db.query(Prediction).filter(Prediction.id == prediction_id).first()
+    
+    if not prediction:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Prediction not found"
+        )
+    
+    return PredictBettingExpensesResponse(
+        id=prediction.id,
+        name=prediction.name,
+        age=prediction.age,
+        social_class=prediction.social_class,
+        gender=prediction.gender,
+        bets_frequency=prediction.bets_frequency,
+        mensal_rent=prediction.mensal_rent,
+        loss=prediction.loss,
+        r2=prediction.r2
+    )
