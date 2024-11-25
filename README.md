@@ -43,22 +43,22 @@ $ http://localhost:8000/docs
 
 1. Start the PostgreSQL container:
 ```bash
-$ docker-compose up -d
+$ docker compose up -d
 ```
 
 2. Verify the container is running:
 ```bash
-$ docker-compose ps
+$ docker compose ps
 ```
 
 3. Stop the database:
 ```bash
-$ docker-compose down
+$ docker compose down
 ```
 
 4. To completely reset the database (removes all data):
 ```bash
-$ docker-compose down -v
+$ docker compose down -v
 ```
 
 ### Database Connection Details
@@ -73,4 +73,4 @@ If you encounter database connection issues:
 1. Ensure the database container is running
 2. Check if port 5432 is available on your machine
 3. Verify your .env file matches the database credentials
-4. Try resetting the database with `docker-compose down -v` followed by `docker-compose up -d`
+4. Try resetting the database with `docker compose down -v` followed by `docker compose up -d`
