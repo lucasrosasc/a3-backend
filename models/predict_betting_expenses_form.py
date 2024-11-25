@@ -6,6 +6,6 @@ class PredictBettingExpensesForm:
     name: str
     age: int
     gender: bool
-    mensal_rent: float
+    mensal_income: float
     social_class: int
     bets_frequency: int

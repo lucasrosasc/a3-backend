@@ -1,7 +1,15 @@
 from dataclasses import dataclass
+from uuid import UUID
 
 
 @dataclass
 class PredictBettingExpensesResponse:
-    message: str
-    status: str
+    id: UUID
+    name: str
+    age: int
+    social_class: int
+    gender: int
+    bets_frequency: int
+    mensal_income: float
+    loss: float
+    r2: float
