@@ -19,6 +19,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# /api/v1/predict-betting-expenses
+# /api/v1/predict-betting-expenses/:result_id
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
 if __name__ == "__main__":
