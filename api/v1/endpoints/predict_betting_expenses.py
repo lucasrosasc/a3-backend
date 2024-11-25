@@ -20,7 +20,7 @@ async def post_predict_betting_expenses(predict_betting_expenses_form: PredictBe
         "age": [18, 25, 30, 35, 40, 45, 50, 55, 60],
         "social_class": [1, 2, 1, 2, 3, 1, 3, 2, 3],  # 1: A/B, 2: C, 3: D/E
         "gender": [0, 1, 0, 1, 1, 0, 1, 0, 0],  # 0: Male, 1: Female
-        "bets_frquency": [1, 3, 2, 5, 4, 1, 0, 1, 2],  # Number of bets per week
+        "bets_frequency": [1, 3, 2, 5, 4, 1, 0, 1, 2],  # Number of bets per week
         "mensal_rent": [
             2000,
             3000,
@@ -39,7 +39,7 @@ async def post_predict_betting_expenses(predict_betting_expenses_form: PredictBe
     df = pd.DataFrame(data)
 
     # Separation of independent and dependent variables
-    X = df[["age", "social_class", "gender", "bets_frquency", "mensal_rent"]]
+    X = df[["age", "social_class", "gender", "bets_frequency", "mensal_rent"]]
     y = df["bets_spent"]
 
     # Split data into training and testing sets
@@ -58,8 +58,8 @@ async def post_predict_betting_expenses(predict_betting_expenses_form: PredictBe
     r2 = r2_score(y_test, y_pred)
 
     # Function for forecasting expenses with checking negative values
-    def predict_spend(age, social_class, gender, bets_frquency, mensal_rent):
-        input_data = np.array([[age, social_class, gender, bets_frquency, mensal_rent]])
+    def predict_spend(age, social_class, gender, bets_frequency, mensal_rent):
+        input_data = np.array([[age, social_class, gender, bets_frequency, mensal_rent]])
         predicted_gasto = ridge_model.predict(input_data)
         return max(predicted_gasto[0], 0)  # Ensures the value is not negative
 
@@ -80,8 +80,8 @@ async def post_predict_betting_expenses(predict_betting_expenses_form: PredictBe
         if gender not in [0, 1]:
             raise ValueError("Gênero deve ser 0 ou 1.")
 
-        bets_frquency = int(predict_betting_expenses_form.bets_frquency)
-        if not (0 <= bets_frquency <= 7):
+        bets_frequency = int(predict_betting_expenses_form.bets_frequency)
+        if not (0 <= bets_frequency <= 7):
             raise ValueError("A frequência de apostas deve ser entre 0 e 7.")
 
         mensal_rent = float(predict_betting_expenses_form.mensal_rent)
@@ -89,7 +89,7 @@ async def post_predict_betting_expenses(predict_betting_expenses_form: PredictBe
             raise ValueError("A renda mensal deve ser um valor positivo.")
         # Prediction and result
         expected_expense = predict_spend(
-            age, social_class, gender, bets_frquency, mensal_rent
+            age, social_class, gender, bets_frequency, mensal_rent
         )
         
         return PredictBettingExpensesResponse(

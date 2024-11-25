@@ -8,4 +8,4 @@ class PredictBettingExpensesForm:
     gender: bool
     mensal_rent: float
     social_class: int
-    bets_frquency: int
+    bets_frequency: int
