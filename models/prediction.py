@@ -12,6 +12,6 @@ class Prediction(Base):
     social_class = Column(Integer, nullable=False)
     gender = Column(Integer, nullable=False)
     bets_frequency = Column(Integer, nullable=False)
-    mensal_rent = Column(Float, nullable=False)
+    mensal_income = Column(Float, nullable=False)
     loss = Column(Float, nullable=False)
     r2 = Column(Float, nullable=False) 

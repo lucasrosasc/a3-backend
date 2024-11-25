@@ -10,6 +10,6 @@ class PredictBettingExpensesResponse:
     social_class: int
     gender: int
     bets_frequency: int
-    mensal_rent: float
+    mensal_income: float
     loss: float
     r2: float

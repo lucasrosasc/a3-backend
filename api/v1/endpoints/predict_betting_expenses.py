@@ -27,7 +27,7 @@ async def post_predict_betting_expenses(
         "social_class": [1, 2, 1, 2, 3, 1, 3, 2, 3],  # 1: A/B, 2: C, 3: D/E
         "gender": [0, 1, 0, 1, 1, 0, 1, 0, 0],  # 0: Male, 1: Female
         "bets_frequency": [1, 3, 2, 5, 4, 1, 0, 1, 2],  # Number of bets per week
-        "mensal_rent": [
+        "mensal_income": [
             2000,
             3000,
             2500,
@@ -45,7 +45,7 @@ async def post_predict_betting_expenses(
     df = pd.DataFrame(data)
 
     # Separation of independent and dependent variables
-    X = df[["age", "social_class", "gender", "bets_frequency", "mensal_rent"]]
+    X = df[["age", "social_class", "gender", "bets_frequency", "mensal_income"]]
     y = df["bets_spent"]
 
     # Split data into training and testing sets
@@ -64,8 +64,8 @@ async def post_predict_betting_expenses(
     r2 = r2_score(y_test, y_pred)
 
     # Function for forecasting expenses with checking negative values
-    def predict_spend(age, social_class, gender, bets_frequency, mensal_rent):
-        input_data = np.array([[age, social_class, gender, bets_frequency, mensal_rent]])
+    def predict_spend(age, social_class, gender, bets_frequency, mensal_income):
+        input_data = np.array([[age, social_class, gender, bets_frequency, mensal_income]])
         predicted_gasto = ridge_model.predict(input_data)
         return max(predicted_gasto[0], 0)  # Ensures the value is not negative
 
@@ -90,12 +90,12 @@ async def post_predict_betting_expenses(
         if not (0 <= bets_frequency <= 7):
             raise ValueError("A frequência de apostas deve ser entre 0 e 7.")
 
-        mensal_rent = float(predict_betting_expenses_form.mensal_rent)
-        if mensal_rent < 0:
+        mensal_income = float(predict_betting_expenses_form.mensal_income)
+        if mensal_income < 0:
             raise ValueError("A renda mensal deve ser um valor positivo.")
         # Prediction and result
         expected_expense = predict_spend(
-            age, social_class, gender, bets_frequency, mensal_rent
+            age, social_class, gender, bets_frequency, mensal_income
         )
         
         # Convert numpy values to Python native types
@@ -108,7 +108,7 @@ async def post_predict_betting_expenses(
             social_class=social_class,
             gender=gender,
             bets_frequency=bets_frequency,
-            mensal_rent=mensal_rent,
+            mensal_income=mensal_income,
             loss=expected_expense_float,
             r2=r2_float
         )
@@ -123,7 +123,7 @@ async def post_predict_betting_expenses(
             social_class=new_prediction.social_class,
             gender=new_prediction.gender,
             bets_frequency=new_prediction.bets_frequency,
-            mensal_rent=new_prediction.mensal_rent,
+            mensal_income=new_prediction.mensal_income,
             loss=new_prediction.loss,
             r2=new_prediction.r2
         )
@@ -151,7 +151,7 @@ async def get_prediction(prediction_id: UUID, db: Session = Depends(get_db)):
         social_class=prediction.social_class,
         gender=prediction.gender,
         bets_frequency=prediction.bets_frequency,
-        mensal_rent=prediction.mensal_rent,
+        mensal_income=prediction.mensal_income,
         loss=prediction.loss,
         r2=prediction.r2
     )
