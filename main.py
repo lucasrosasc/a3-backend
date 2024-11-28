@@ -21,6 +21,11 @@ app.add_middleware(
 
 # /api/v1/predict-betting-expenses
 # /api/v1/predict-betting-expenses/:result_id
+# /api/v1/ranking/age
+# /api/v1/ranking/gender
+# /api/v1/ranking/social-class
+# /api/v1/ranking/bets-frequency
+# /api/v1/ranking/all
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
 if __name__ == "__main__":
